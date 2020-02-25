@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gold CSV</title>
+    </head>
+
+    <body>
+        <input type="file" id="csvUploadInput"><br>
+        <button onclick="uploadCsv()">Upload</button><br><br>
+        <table id="outputTable"></table>
+
+        <script>
+            function uploadCsv() {
+                let reader = new FileReader()
+                let uploadInput = document.getElementById("csvUploadInput")
+
+                reader.readAsText(uploadInput.files[0])
+                reader.onload = function (e) {
+                    let fileContents = e.target.result
+
+                    let rows = fileContents.split("\r\n")
+
+                    let outputTable = document.getElementById("outputTable")
+
+                    for (let row of rows) {
+                        let outputRow = outputTable.insertRow()
+                        let dataCells = row.split(",")
+
+                        let dob = dataCells[3]
+                        dob = dob.split("/")[2]+"-"+dob.split("/")[1]+"-"+dob.split("/")[0]
+                        if (dob != "DOB") {
+                            // https://stackoverflow.com/questions/4060004/calculate-age-given-the-birth-date-in-the-format-yyyymmdd
+                            dataCells[3] = dataCells[3] + " (" + Math.floor((new Date() - new Date(dob).getTime()) / 3.15576e+10) + ")"
+                        }
+
+                        for (let data of dataCells) {
+                            outputRow.insertCell().innerHTML = data 
+                        }
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>
