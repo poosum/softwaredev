@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Silver XML</title>
+    </head>
+    <body>
+        <button onclick="readXMLFile()">Read file</button><br><br>
+        <table id="outputTable">
+            <tbody>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Country</th>
+                <th>Company</th>
+                <th>Price</th>
+                <th>Year</th>
+            </tbody>
+        </table>
+        <script>
+            function readXMLFile() {
+                let xmlHTTP = new XMLHttpRequest()
+                xmlHTTP.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        let output = document.getElementById("outputTable")
+                        let cds = this.responseXML.getElementsByTagName("CD")
+                        for (let cd of cds) {
+                            let outputRow = output.insertRow()
+                            for (let cdInfo of cd.children) {
+                                let cell = outputRow.insertCell()
+                                cell.innerHTML = cdInfo.innerHTML
+                            }
+                        }
+                    }
+                }
+                xmlHTTP.open("GET", "cd_catalog.xml", true)
+                xmlHTTP.send()
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Bronze XML</title>
+    </head>
+    <body>
+        <button onclick="readXMLFile()">Read file</button>
+        <script>
+            function readXMLFile() {
+                let xmlHTTP = new XMLHttpRequest()
+                xmlHTTP.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        console.log(this.responseXML)
+                    }
+                }
+                xmlHTTP.open("GET", "cd_catalog.xml", true)
+                xmlHTTP.send()
+            }
+        </script>
+    </body>
+</html>
