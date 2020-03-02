@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Gold XMLs</title>
+    </head>
+    <body>
+        <button onclick="getWeatherData()">Get weather</button>
+        <p id="output"> </p>
+        <script>
+            function parseWeatherData(data) {
+                let output = document.getElementById("outputTable")
+                console.log(data)
+                output.innerHTML = data.getElementsByTagName("city").children[0].firstChild.attributes[]
+            }
+
+            function getWeatherData() {
+                let xmlHTTP = new XMLHttpRequest()
+                xmlHTTP.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        parseWeatherData(this.responseXML)
+                    }
+                }
+                xmlHTTP.open("GET", "https://api.openweathermap.org/data/2.5/weather?q=Melbourne,au&mode=xml&units=metric&appid=416e896e1388f52a31d65d9452e3cc4d")
+                xmlHTTP.send()
+            }
+        </script>
+    </body>
+</html>
