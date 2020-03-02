@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>IT Crowd Quiz</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="row">
+                <img class="text-center" src="img/moss.jpg">
+            </div>
+
+            <br><br>
+
+            <div class="row">
+                <div class="col">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="quizFileInput">
+                        <label class="custom-file-label" for="quizFileInput">Choose file</label>
+                    </div>
+                </div>
+                <div class="col">
+                    <button class="btn btn-primary" onclick="readFile()">Go</button>
+                </div>
+            </div>
+
+            <div class="row" id="questionsOutput">
+
+            </div>
+        </div>
+        <script>
+            function parseXML(xml) {
+                let questions = xml.getElementsByTagName("quizzes")
+                let output = document.getElementById("questionsOutput")
+                let questionArray = []
+                for (let question of questions[0].children) {
+                    let questionObj = {}
+                    questionObj.opt = []
+                    for (let questionXML of question.children) {
+                        if (questionXML.nodeName == "question") {
+                            questionObj.question = questionXML.innerHTML
+                        } else if (questionXML.nodeName == "option") {
+                            questionObj.opt.push(questionXML.innerHTML)
+                        } else if (questionXML.nodeName == "answer") {
+                            questionObj.answer = questionXML.innerHTML
+                        }
+                    }
+                    questionArray.push(questionObj)
+                }
+                console.log(questionArray)
+                for (question of questionArray) {
+                    output.innerHTML += question.question += "<br>"
+                    for (questionOpt of question.opt) {
+                        output.innerHTML += questionOpt += "<br>"
+                    }
+                }
+            }
+
+            function readFile() {
+                let xmlHTTP = new XMLHttpRequest()
+                xmlHTTP.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        parseXML(this.responseXML)
+                    }
+                }
+                xmlHTTP.open("GET", "quiz.xml", true)
+                xmlHTTP.send()
+            }
+        </script>
+    </body>
+</html>
