@@ -25,36 +25,71 @@
                 </div>
             </div>
 
-            <div class="row" id="questionsOutput">
+            <br><br>
+            <div id="questionsOutput">
 
             </div>
+            <button class="btn btn-primary d-none" id="submitButton" onclick="calculateScore()">Submit</button>
         </div>
+        <br>
         <script>
+            function calculateScore() {
+                document.getElementById
+            }
+
             function parseXML(xml) {
                 let questions = xml.getElementsByTagName("quizzes")
                 let output = document.getElementById("questionsOutput")
                 let questionArray = []
+                let questionNum = 1
                 for (let question of questions[0].children) {
                     let questionObj = {}
                     questionObj.opt = []
+                    let optNum = 1
                     for (let questionXML of question.children) {
                         if (questionXML.nodeName == "question") {
                             questionObj.question = questionXML.innerHTML
-                        } else if (questionXML.nodeName == "option") {
-                            questionObj.opt.push(questionXML.innerHTML)
                         } else if (questionXML.nodeName == "answer") {
                             questionObj.answer = questionXML.innerHTML
+                        } else if (questionXML.nodeName == "option") {
+                            questionObj.opt.push({opt: questionXML.innerHTML, optNum: optNum, isCorrect: false})
+                            optNum++
                         }
                     }
+                    questionObj.qNum = questionNum
                     questionArray.push(questionObj)
+                    questionNum++
+                }
+                let letterOpts = ["a", "b", "c", "d"]
+                for (question of questionArray) {
+                    for (opt of question.opt) {
+                        let correct = false
+                        console.log("current opt: "+letterOpts[opt.optNum - 1])
+                        console.log("correct opt: "+question.answer)
+                        if (letterOpts[opt.optNum - 1] == question.answer) {
+                            correct = true
+                        }
+                        opt.isCorrect = correct
+                    }
                 }
                 console.log(questionArray)
                 for (question of questionArray) {
-                    output.innerHTML += question.question += "<br>"
-                    for (questionOpt of question.opt) {
-                        output.innerHTML += questionOpt += "<br>"
+                    output.innerHTML += '<h4>'+question.question+'</h4>'
+                    for (option of question.opt) {
+                        output.innerHTML += '<div class="form-check">'
+                        output.innerHTML += 
+                        `
+                        <input class="form-check-input" type="radio" name="question-${question.qNum}" id="option-${question.qNum}-${option.optNum}" value="${option.isCorrect}">
+                        <label class="form-check-label" for="option-${question.qNum}-${option.optNum}">
+                            ${option.opt}
+                        </label>
+                        `
+                        output.innerHTML += '</div>'
                     }
                 }
+                output.innerHTML += "<br><br>"
+
+                document.getElementById("submitButton").classList = "btn btn-primary"
             }
 
             function readFile() {
