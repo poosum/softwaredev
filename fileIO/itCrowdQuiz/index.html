@@ -17,7 +17,7 @@
                 <div class="col">
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" id="quizFileInput">
-                        <label class="custom-file-label" for="quizFileInput">Choose file</label>
+                        <label class="custom-file-label" for="quizFileInput" id="fileInputLabel">Choose file</label>
                     </div>
                 </div>
                 <div class="col">
@@ -25,16 +25,38 @@
                 </div>
             </div>
 
-            <br><br>
-            <div id="questionsOutput">
+            
+            <div id="questionsOutput"></div>
 
-            </div>
+            <div id="scoreOutput"></div>
+
             <button class="btn btn-primary d-none" id="submitButton" onclick="calculateScore()">Submit</button>
         </div>
         <br>
         <script>
+            document.getElementById("quizFileInput").addEventListener('change', (event) => {
+                document.getElementById("fileInputLabel").innerText = event.target.files[0].name
+            })
+
+            let questionArrayGlobal
+
             function calculateScore() {
-                document.getElementById
+                let answers = document.getElementById("questionsOutput")
+                let score = 0
+                for (ans of answers.children) {
+                    if (ans.localName == "input") {
+                        if (ans.checked == true && ans.value == "true") {
+                            score += 1
+                            ans.labels[0].innerHTML = '<span class="text-success">'+ans.labels[0].innerHTML+'</span>'
+                        } else if (ans.checked == true && ans.value == "false") {
+                            ans.labels[0].innerHTML = '<span class="text-danger">'+ans.labels[0].innerHTML+'</span>'
+                        } else if (ans.checked == false && ans.value == "true") {
+                            ans.labels[0].innerHTML = '<span class="text-success">'+ans.labels[0].innerHTML+'</span>'
+                        }
+                    }
+                }
+                let scoreStr = score + "/" + questionArrayGlobal[questionArrayGlobal.length - 1].qNum
+                document.getElementById("scoreOutput").innerHTML = '<p class="text-primary">You scored ' + scoreStr + '</p>'
             }
 
             function parseXML(xml) {
@@ -42,6 +64,7 @@
                 let output = document.getElementById("questionsOutput")
                 let questionArray = []
                 let questionNum = 1
+                output.innerHTML = ""
                 for (let question of questions[0].children) {
                     let questionObj = {}
                     questionObj.opt = []
@@ -64,17 +87,15 @@
                 for (question of questionArray) {
                     for (opt of question.opt) {
                         let correct = false
-                        console.log("current opt: "+letterOpts[opt.optNum - 1])
-                        console.log("correct opt: "+question.answer)
                         if (letterOpts[opt.optNum - 1] == question.answer) {
                             correct = true
                         }
                         opt.isCorrect = correct
                     }
                 }
-                console.log(questionArray)
+                
                 for (question of questionArray) {
-                    output.innerHTML += '<h4>'+question.question+'</h4>'
+                    output.innerHTML += '<br><br><h4>Q.'+question.qNum+' '+question.question+'</h4><br>'
                     for (option of question.opt) {
                         output.innerHTML += '<div class="form-check">'
                         output.innerHTML += 
@@ -90,17 +111,18 @@
                 output.innerHTML += "<br><br>"
 
                 document.getElementById("submitButton").classList = "btn btn-primary"
+                questionArrayGlobal = questionArray
             }
 
             function readFile() {
-                let xmlHTTP = new XMLHttpRequest()
-                xmlHTTP.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        parseXML(this.responseXML)
-                    }
+                let fileInput = document.getElementById("quizFileInput")
+                let xmlParser = new DOMParser()
+                let fReader = new FileReader()
+                fReader.onload = function (e) {
+                    let xml = xmlParser.parseFromString(e.target.result, "application/xml")
+                    parseXML(xml)
                 }
-                xmlHTTP.open("GET", "quiz.xml", true)
-                xmlHTTP.send()
+                fReader.readAsText(quizFileInput.files[0])
             }
         </script>
     </body>
