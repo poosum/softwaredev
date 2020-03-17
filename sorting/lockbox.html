@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+
+    <body>
+        <script>
+            function randArr(num){
+                let arr = [];
+                for (let i = 0; i < num; i++) {
+                    arr.push(Math.floor(Math.random() * 10))
+                }
+                return arr 
+            }
+            
+            function swap(arr, a, b) {
+                let temp = arr[a]
+                arr[a] = arr[b]
+                arr[b] = temp
+            }
+            
+            // Split array into two seperate arrays
+            function partition(arr, start, end) {
+                let pivotVal = arr[end]
+                let pivotIndex = start
+            
+                for (let i = start; i < end; i++) {
+                    if (arr[i] < pivotVal) {
+                        swap(arr, i, pivotIndex)
+                        pivotIndex++
+                    }
+                }
+                swap(arr, pivotIndex, end)
+            
+                return pivotIndex
+            }
+            
+            function quickSort(arr, start, end) {
+                if (start >= end) {
+                    return
+                }
+            
+                let index = partition(arr, start, end)
+            
+                quickSort(arr, start, index - 1)
+                quickSort(arr, index + 1, end)
+            
+                return arr
+            }
+            
+            // function sort(arr) {
+            //     for (let i = 0; i < arr.length; i++) {
+            //         min_index = i
+            //         for (let j = i + 1; j < arr.length; j++) {
+            //             if (arr[j] < arr[min_index]) { min_index = j}
+            //         }
+            //         if (min_index != i) { 
+            //             arr = swap(arr, i, min_index) 
+            //         }
+            //     }
+            
+            //     return arr
+            // }
+            
+            let tstArr = randArr(50)
+            console.log(tstArr)
+            let tstArr2 = tstArr
+            
+            let t1 = performance.now()
+            //sort(tstArr)
+            let t2 = performance.now()
+            console.log('selection took ' + (t2 - t1))
+            
+            t1 = performance.now()
+            tstArr2.sort()
+            t2 = performance.now()
+            console.log('quick took ' + (t2 - t1))
+            </script>
+    </body>
+</html>
